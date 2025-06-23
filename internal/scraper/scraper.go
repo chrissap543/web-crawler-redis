@@ -91,7 +91,7 @@ func cleanHrefs(hrefs []string, baseURL string) []string {
 
 func ScrapePage(q *myredis.RedisQueue, s *myredis.RedisSet) {
 	if err := os.MkdirAll("/app/data", 0755); err != nil {
-
+		log.Printf("Could not open directory")
         return
     }
 
@@ -114,19 +114,17 @@ func ScrapePage(q *myredis.RedisQueue, s *myredis.RedisSet) {
 			continue
 		}
 		if isScraped {
-			fmt.Printf("Already scraped: %s\n", website)
+			log.Printf("Already scraped: %s\n", website)
 			continue
 		}
 
 		logLine := fmt.Sprintf("Scraping: %s\n", website)
-		fmt.Print(logLine)
 		if _, err := file.WriteString(logLine); err != nil {
             log.Printf("Error writing to file: %v", err)
         }
 
 		links := getLinks(q, website)
 		for _, link := range links {
-			fmt.Printf("Found a neighbor: %s\n", link)
 			q.Enqueue(link)
 			s.Add(website)
 		}

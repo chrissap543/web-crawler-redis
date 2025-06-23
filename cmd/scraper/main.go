@@ -51,15 +51,15 @@ func connectToRedis(maxAttempts int) (*redis.Client) {
 }
 
 func main() {
-	fmt.Println("Trying to connect to redis server")
+	log.Println("Trying to connect to redis server")
 	rdb := connectToRedis(10)
 	defer rdb.Close()
 
-	fmt.Println("Building queue/set")
+	log.Println("Building queue/set")
 	redisQueue := myredis.NewRedisQueue(rdb, "websites")
 	redisSet := myredis.NewRedisSet(rdb, "visited")
 	redisQueue.CheckQueue()
 
-	fmt.Println("Starting scraping")
+	log.Println("Starting scraping")
 	scraper.ScrapePage(redisQueue, redisSet)
 }

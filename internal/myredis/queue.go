@@ -2,7 +2,7 @@ package myredis
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -46,7 +46,7 @@ func (q *RedisQueue) CheckQueue() (error) {
 
 	if length == 0 {
 		starting_url := "https://simple.wikipedia.org/wiki/Anime"
-		fmt.Println("Queue is empty, give it starting_url")
+		log.Println("Queue is empty, give it starting_url")
 		return q.Enqueue(starting_url)
 	}
 
