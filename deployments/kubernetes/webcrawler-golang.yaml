@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webscraper
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webscraper
+  template:
+    metadata:
+      labels:
+        app: webscraper
+    spec:
+      containers:
+      - name: webscraper
+        image: webscraper:latest
+        env:
+        - name: REDIS_HOST
+          value: "redis-service"  # This is the service name
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_PASSWORD
+          value: ""  # Empty since your Redis has no auth
+        imagePullPolicy: Never  # For local minikube images
