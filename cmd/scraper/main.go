@@ -38,6 +38,7 @@ func connectToRedis(maxAttempts int) (*redis.Client) {
 
 		if err == nil && result == "PONG" {
 			log.Printf("Connected to redis server with pong: %s", result)
+			return rdb
 		}
 		log.Printf("Failed to ping the redis server")
 		rdb.Close()
