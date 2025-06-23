@@ -1,0 +1,36 @@
+version: '3'
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: /ecs/scraper-redis
+        awslogs-region: ${REGION}
+        awslogs-stream-prefix: redis
+        awslogs-create-group: "true"
+
+  scraper:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.us-west-2.amazonaws.com/web-scraper:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_HOST=localhost
+      - REDIS_PORT=6379
+      - GO_ENV=production
+    depends_on:
+      - redis
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: /ecs/scraper-app
+        awslogs-region: ${REGION}
+        awslogs-stream-prefix: scraper
+        awslogs-create-group: "true"
