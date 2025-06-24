@@ -32,7 +32,7 @@ func createPageNode(driver neo4j.DriverWithContext, ctx context.Context, url, ti
     `
 	_, err := session.ExecuteWrite(ctx, func(tx neo4j.ManagedTransaction) (any, error) {
 		result, err := tx.Run(ctx, query, map[string]any {
-			"url": url,
+				"url": url,
 				"title": title,
 		})
 		if err != nil {
@@ -51,7 +51,7 @@ func createPageLink(driver neo4j.DriverWithContext, ctx context.Context, fromURL
     defer session.Close(ctx)
 
     query := `
-        MATCH (from:Page {url: $fromURL})
+        MERGE (from:Page {url: $fromURL})
         MERGE (to:Page {url: $toURL})
         MERGE (from)-[r:LINKS_TO]->(to)
         ON CREATE SET r.created_at = datetime()
@@ -206,15 +206,14 @@ func ScrapePage(q *myredis.RedisQueue, s *myredis.RedisSet, driver neo4j.DriverW
 
 			if driver != nil {
 				if err := createPageLink(driver, ctx, website, link); err != nil {
-					log.Printf("Error creating link")
+					log.Printf("Error creating link: %v", err)
 				} else {
 					linkCount++
 				}
 			}
 
-			s.Add(website)
 		}
-
+		s.Add(website)
 		// file.Sync()
 	}
 }
