@@ -2,12 +2,10 @@ package scraper
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"regexp"
 	"strings"
 	"time"
